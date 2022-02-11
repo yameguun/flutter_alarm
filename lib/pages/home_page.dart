@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
 import '../alarm.dart';
@@ -14,11 +15,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   List<Alarm> alarmList = [
-    Alarm(alarmTime: DateTime.now()),
-    Alarm(alarmTime: DateTime.now()),
-    Alarm(alarmTime: DateTime.now()),
-    Alarm(alarmTime: DateTime.now())
+    Alarm(alarmTime: DateTime.now(), isActive: true),
+    Alarm(alarmTime: DateTime.now(), isActive: false),
+    Alarm(alarmTime: DateTime.now(), isActive: true),
+    Alarm(alarmTime: DateTime.now(), isActive: false)
   ];
+
+  SlidableController controller = SlidableController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +47,30 @@ class _HomePageState extends State<HomePage> {
                   return Column(
                     children: [
                       if (index==0) const Divider(color: Colors.grey, height: 1),
-                      ListTile(
-                        title: Text(
-                            DateFormat('H:mm').format(alarm.alarmTime),
-                            style: const TextStyle(color: Colors.white, fontSize: 50)
+                      Slidable(
+                        controller: controller,
+                        actionPane: const SlidableScrollActionPane(),
+                        child: ListTile(
+                          title: Text(
+                              DateFormat('H:mm').format(alarm.alarmTime),
+                              style: const TextStyle(color: Colors.white, fontSize: 50)
+                          ),
+                          trailing: CupertinoSwitch(
+                            value: alarm.isActive,
+                            onChanged: (newValue) {
+                              setState(() {
+                                alarm.isActive = newValue;
+                              });
+                            },
+                          ),
                         ),
-                        trailing: CupertinoSwitch(
-                          value: true,
-                          onChanged: (newValue) {
-
-                          },
-                        ),
+                        secondaryActions: const [
+                          IconSlideAction(
+                            icon: Icons.delete,
+                            caption: '削除',
+                            color: Colors.red,
+                          )
+                        ],
                       ),
                       const Divider(color: Colors.grey, height: 8)
                     ],
