@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_alarm/pages/add_edit_alarm_page.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
@@ -36,7 +37,7 @@ class _HomePageState extends State<HomePage> {
             trailing: GestureDetector(
               child: const Icon(Icons.add, color: Colors.orange),
               onTap: () {
-
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditAlarmPage()));
               },
             ),
           ),
