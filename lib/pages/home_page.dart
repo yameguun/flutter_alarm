@@ -71,11 +71,15 @@ class _HomePageState extends State<HomePage> {
                             });
                           },
                         ),
-                        secondaryActions: const [
+                        secondaryActions: [
                           IconSlideAction(
                             icon: Icons.delete,
                             caption: '削除',
                             color: Colors.red,
+                            onTap: () {
+                              alarmList.removeAt(index);
+                              setState(() {});
+                            },
                           )
                         ],
                       ),
