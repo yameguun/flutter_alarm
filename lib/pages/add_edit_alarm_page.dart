@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 
 class AddEditAlarmPage extends StatefulWidget {
   final List<Alarm> alarmList;
-  AddEditAlarmPage(this.alarmList);
+  final int? index;
+  AddEditAlarmPage(this.alarmList, {this.index});
 
   @override
   _AddEditAlarmPageState createState() => _AddEditAlarmPageState();
@@ -14,6 +15,23 @@ class AddEditAlarmPage extends StatefulWidget {
 class _AddEditAlarmPageState extends State<AddEditAlarmPage> {
   TextEditingController controller = TextEditingController();
   DateTime selectedDate = DateTime.now();
+
+  void initEditAlarm() {
+    if (widget.index != null) {
+      selectedDate = widget.alarmList[widget.index!].alarmTime;
+      controller.text = DateFormat('H:mm').format(selectedDate);
+      setState(() {
+
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initEditAlarm();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +56,13 @@ class _AddEditAlarmPageState extends State<AddEditAlarmPage> {
             ),
             onTap: () {
               Alarm alarm = Alarm(alarmTime: DateTime(2000, 1, 1, selectedDate.hour, selectedDate.minute), isActive: true);
-              widget.alarmList.add(alarm);
+
+              if (widget.index != null) {
+                widget.alarmList[widget.index!] = alarm;
+              } else {
+                widget.alarmList.add(alarm);
+              }
+
               Navigator.pop(context);
             },
           )

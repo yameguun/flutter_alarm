@@ -64,6 +64,12 @@ class _HomePageState extends State<HomePage> {
                               });
                             },
                           ),
+                          onTap: () async {
+                            await Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditAlarmPage(alarmList, index: index)));
+                            setState(() {
+                              alarmList.sort((a, b) => a.alarmTime.compareTo(b.alarmTime));
+                            });
+                          },
                         ),
                         secondaryActions: const [
                           IconSlideAction(
