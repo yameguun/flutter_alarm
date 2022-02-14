@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alarm/pages/add_edit_alarm_page.dart';
+import 'package:flutter_alarm/sqflite.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
@@ -14,12 +15,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  List<Alarm> alarmList = [
-    Alarm(alarmTime: DateTime.now(), isActive: true)
-  ];
-
+  List<Alarm> alarmList = [];
   SlidableController controller = SlidableController();
+
+  Future<void> initDb() async {
+    await DbProvider.setDb();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initDb();
+  }
 
   @override
   Widget build(BuildContext context) {
