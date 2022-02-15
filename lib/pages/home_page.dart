@@ -20,6 +20,13 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> initDb() async {
     await DbProvider.setDb();
+    alarmList = await DbProvider.getData();
+    setState(() {});
+  }
+
+  Future<void> reBuild() async {
+    alarmList = await DbProvider.getData();
+    alarmList.sort((a, b) => a.alarmTime.compareTo(b.alarmTime));
     setState(() {});
   }
 
@@ -43,9 +50,7 @@ class _HomePageState extends State<HomePage> {
               child: const Icon(Icons.add, color: Colors.orange),
               onTap: () async {
                 await Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditAlarmPage(alarmList)));
-                setState(() {
-                  alarmList.sort((a, b) => a.alarmTime.compareTo(b.alarmTime));
-                });
+                reBuild();
               },
             ),
           ),
@@ -74,9 +79,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           onTap: () async {
                             await Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditAlarmPage(alarmList, index: index)));
-                            setState(() {
-                              alarmList.sort((a, b) => a.alarmTime.compareTo(b.alarmTime));
-                            });
+                            reBuild();
                           },
                         ),
                         secondaryActions: [
