@@ -7,6 +7,7 @@ import 'package:flutter_alarm/sqflite.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import '../alarm.dart';
 
@@ -20,7 +21,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Alarm> alarmList = [];
   SlidableController controller = SlidableController();
-  Timer? _timer;
   DateTime time = DateTime.now();
   final FlutterLocalNotificationsPlugin fulutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -34,6 +34,28 @@ class _HomePageState extends State<HomePage> {
     alarmList = await DbProvider.getData();
     alarmList.sort((a, b) => a.alarmTime.compareTo(b.alarmTime));
     setState(() {});
+  }
+
+  void initiaLizeNotification() {
+    fulutterLocalNotificationsPlugin.initialize(InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: IOSInitializationSettings()
+    ));
+  }
+
+  void setNotification(int id) {
+    fulutterLocalNotificationsPlugin.zonedSchedule(
+        id,
+        "アラーム",
+        "時間になりました",
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: 3)),
+        NotificationDetails(
+            android: AndroidNotificationDetails('id','name', importance: Importance.max, priority: Priority.high),
+            iOS: IOSNotificationDetails()
+        ),
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        androidAllowWhileIdle: true
+    );
   }
 
   Future<void> notification() async {
@@ -51,20 +73,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     initDb();
-    _timer = Timer.periodic(
-        const Duration(seconds: 1),
-            (timer) {
-          time = time.add(Duration(seconds: 1));
-          for (var alarm in alarmList) {
-            if (alarm.isActive == true
-                && alarm.alarmTime.hour == time.hour
-                && alarm.alarmTime.minute == time.minute
-                && time.second == 0
-            ) {
-              notification();
-            }
-          }
-    });
+    initiaLizeNotification();
   }
 
   @override
@@ -112,6 +121,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           onTap: () async {
                             await Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditAlarmPage(alarmList, index: index)));
+                            setNotification(0);
                             reBuild();
                           },
                         ),
