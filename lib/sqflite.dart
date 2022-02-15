@@ -55,4 +55,8 @@ class DbProvider {
       whereArgs: [alarm.id]
     );
   }
+
+  static Future<void> deleteData(Alarm alarm) async {
+    await database!.delete(tableName, where: 'id = ?', whereArgs: [alarm.id]);
+  }
 }

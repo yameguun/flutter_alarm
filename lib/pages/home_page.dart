@@ -89,9 +89,9 @@ class _HomePageState extends State<HomePage> {
                             icon: Icons.delete,
                             caption: '削除',
                             color: Colors.red,
-                            onTap: () {
-                              alarmList.removeAt(index);
-                              setState(() {});
+                            onTap: () async {
+                              await DbProvider.deleteData(alarm);
+                              reBuild();
                             },
                           )
                         ],
