@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alarm/pages/add_edit_alarm_page.dart';
 import 'package:flutter_alarm/sqflite.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
@@ -17,6 +20,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Alarm> alarmList = [];
   SlidableController controller = SlidableController();
+  Timer? _timer;
+  final FlutterLocalNotificationsPlugin fulutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> initDb() async {
     await DbProvider.setDb();
@@ -30,10 +35,26 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  Future<void> notification() async {
+    fulutterLocalNotificationsPlugin.initialize(InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      iOS: IOSInitializationSettings()
+    ));
+    fulutterLocalNotificationsPlugin.show(1, "アラーム", "時間になりました", NotificationDetails(
+      android: AndroidNotificationDetails('id','name', importance: Importance.max, priority: Priority.high),
+      iOS: IOSNotificationDetails()
+    ));
+  }
+
   @override
   void initState() {
     super.initState();
     initDb();
+    _timer = Timer.periodic(
+        const Duration(seconds: 5),
+            (timer) {
+              notification();
+    });
   }
 
   @override
