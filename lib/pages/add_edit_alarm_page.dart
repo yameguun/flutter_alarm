@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_alarm/alarm.dart';
 import 'package:intl/intl.dart';
 
+import '../sqflite.dart';
+
 class AddEditAlarmPage extends StatefulWidget {
   final List<Alarm> alarmList;
   final int? index;
@@ -54,13 +56,13 @@ class _AddEditAlarmPageState extends State<AddEditAlarmPage> {
               alignment: Alignment.center,
               child: const Text('保存', style: TextStyle(color: Colors.orange)),
             ),
-            onTap: () {
+            onTap: () async {
               Alarm alarm = Alarm(alarmTime: DateTime(2000, 1, 1, selectedDate.hour, selectedDate.minute), isActive: true);
 
               if (widget.index != null) {
                 widget.alarmList[widget.index!] = alarm;
               } else {
-                widget.alarmList.add(alarm);
+                await DbProvider.insertData(alarm);
               }
 
               Navigator.pop(context);

@@ -1,6 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+import 'alarm.dart';
+
 class DbProvider {
   static Database? database;
   static const String tableName = 'alarm';
@@ -21,5 +23,12 @@ class DbProvider {
     } else {
       return database;
     }
+  }
+
+  static Future<void> insertData(Alarm alarm) async {
+    await database!.insert(tableName, {
+      'alarm_time': alarm.alarmTime.toString(),
+      'is_active': alarm.isActive ? 0 : 1
+    });
   }
 }
