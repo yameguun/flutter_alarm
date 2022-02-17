@@ -43,12 +43,12 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
-  void setNotification(int id) {
+  void setNotification(int id, DateTime alarmTime) {
     fulutterLocalNotificationsPlugin.zonedSchedule(
         id,
         "アラーム",
         "時間になりました",
-        tz.TZDateTime.now(tz.local).add(Duration(seconds: 3)),
+        tz.TZDateTime.from(alarmTime, tz.local),
         NotificationDetails(
             android: AndroidNotificationDetails('id','name', importance: Importance.max, priority: Priority.high),
             iOS: IOSNotificationDetails()
@@ -118,11 +118,14 @@ class _HomePageState extends State<HomePage> {
                                 reBuild();
                               });
                             },
+
                           ),
                           onTap: () async {
-                            await Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditAlarmPage(alarmList, index: index)));
-                            setNotification(0);
-                            reBuild();
+                            var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditAlarmPage(alarmList, index: index)));
+                            if (result != null) {
+                              setNotification(result.id, result.alarmTime);
+                              reBuild();
+                            }
                           },
                         ),
                         secondaryActions: [
